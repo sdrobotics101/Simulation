@@ -1,0 +1,3 @@
+[submodule "src/Dependencies/PythonSharedBuffers"]
+	path = src/Dependencies/PythonSharedBuffers
+	url = https://gitlab.com/sdrobotics101/PythonSharedBuffers.git
