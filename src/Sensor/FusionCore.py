@@ -11,12 +11,12 @@ linear  = Linear()
 angular = Angular()
 
 for i in range(3):
-    linear.pos[i] = 0
-    linear.vel[i] = 0
-    linear.acc[i] = 0
     angular.pos[i] = 0
-    angular.vel[i] = 0
-    angular.acc[i] = 0
+    angular.vel[i] = i
+    angular.acc[i] = i+3
+    linear.pos[i] = i
+    linear.vel[i] = i+3
+    linear.acc[i] = i+6
 angular.pos[3] = 1
 
 client = pydsm.Client(43, 100, True)
