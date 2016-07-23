@@ -10,13 +10,31 @@ import pydsm
 linear  = Linear()
 angular = Angular()
 
-for i in range(3):
-    angular.pos[i] = 0
-    angular.vel[i] = i
-    angular.acc[i] = i+3
-    linear.pos[i] = i
-    linear.vel[i] = i+3
-    linear.acc[i] = i+6
+# X, Y, Z
+linear.pos[0] = 0
+linear.pos[1] = 0
+linear.pos[2] = 0
+
+linear.vel[0] = 0
+linear.vel[1] = 0
+linear.vel[2] = 0
+
+linear.acc[0] = 0
+linear.acc[1] = 0
+linear.acc[2] = 0
+
+angular.vel[0] = 0
+angular.vel[0] = 0
+angular.vel[0] = 0
+
+angular.acc[0] = 0
+angular.acc[0] = 0
+angular.acc[0] = 0
+
+# W, X, Y, Z
+angular.pos[0] = 0
+angular.pos[1] = 0
+angular.pos[2] = 0
 angular.pos[3] = 1
 
 client = pydsm.Client(43, 100, True)
