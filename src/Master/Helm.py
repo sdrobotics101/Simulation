@@ -10,7 +10,7 @@ from Constants import *
 
 import pydsm
 
-SERVERID = 254
+SERVERID = 42
 CLIENTID = 103
 
 # Bit indices for mode byte
@@ -78,69 +78,69 @@ def resetSensor(arg):
     sensorReset.reset = not sensorReset.reset
     client.setLocalBufferContents(MASTER_SENSOR_RESET, Pack(sensorReset))
 
-def lpx(arg):
-    controlInput.linear[xaxis].pos[0] = arg[0]
-    controlInput.linear[xaxis].pos[1] = arg[1]
+def lpx(pos, time):
+    controlInput.linear[xaxis].pos[0] = pos
+    controlInput.linear[xaxis].pos[1] = time
     mode[MODE_LINEAR_X] = POS
     update()
 
-def lpy(arg):
-    controlInput.linear[yaxis].pos[0] = arg[0]
-    controlInput.linear[yaxis].pos[1] = arg[1]
+def lpy(pos, time):
+    controlInput.linear[yaxis].pos[0] = pos
+    controlInput.linear[yaxis].pos[1] = time
     mode[MODE_LINEAR_Y] = POS
     update()
 
-def lpz(arg):
-    controlInput.linear[zaxis].pos[0] = arg[0]
-    controlInput.linear[zaxis].pos[1] = arg[1]
+def lpz(pos, time):
+    controlInput.linear[zaxis].pos[0] = pos
+    controlInput.linear[zaxis].pos[1] = time
     mode[MODE_LINEAR_Z] = POS
     update()
 
-def lvx(arg):
-    controlInput.linear[xaxis].vel = arg[0]
+def lvx(vel):
+    controlInput.linear[xaxis].vel = vel
     mode[MODE_LINEAR_X] = VEL
     update()
 
-def lvy(arg):
-    controlInput.linear[yaxis].vel = arg[0]
+def lvy(vel):
+    controlInput.linear[yaxis].vel = vel
     mode[MODE_LINEAR_Y] = VEL
     update()
 
-def lvz(arg):
-    controlInput.linear[zaxis].vel = arg[0]
+def lvz(vel):
+    controlInput.linear[zaxis].vel = vel
     mode[MODE_LINEAR_Z] = VEL
     update()
 
-def apx(arg):
-    controlInput.angular[xaxis].pos[0] = arg[0]
-    controlInput.angular[xaxis].pos[1] = arg[1]
+def apx(pos, time):
+    controlInput.angular[xaxis].pos[0] = pos
+    controlInput.angular[xaxis].pos[1] = time
     mode[MODE_ANGULAR_X] = POS
     update()
 
-def apy(arg):
-    controlInput.angular[yaxis].pos[0] = arg[0]
-    controlInput.angular[yaxis].pos[1] = arg[1]
+def apy(pos, time):
+    controlInput.angular[yaxis].pos[0] = pos
+    controlInput.angular[yaxis].pos[1] = time
     mode[MODE_ANGULAR_Y] = POS
     update()
 
-def apz(arg):
-    controlInput.angular[zaxis].pos[0] = arg[0]
-    controlInput.angular[zaxis].pos[1] = arg[1]
+def apz(pos, time):
+    controlInput.angular[zaxis].pos[0] = pos
+    controlInput.angular[zaxis].pos[1] = time
     mode[MODE_ANGULAR_Z] = POS
     update()
 
-def avx(arg):
-    controlInput.angular[xaxis].vel = arg[0]
+def avx(vel):
+    controlInput.angular[xaxis].vel = vel
     mode[MODE_ANGULAR_X] = VEL
     update()
 
-def avy(arg):
-    controlInput.angular[yaxis].vel = arg[0]
+def avy(vel):
+    controlInput.angular[yaxis].vel = vel
     mode[MODE_ANGULAR_Y] = VEL
     update()
 
-def avz(arg):
-    controlInput.angular[zaxis].vel = arg[0]
+def avz(vel):
+    controlInput.angular[zaxis].vel = vel
     mode[MODE_ANGULAR_Z] = VEL
     update()
 
@@ -202,7 +202,7 @@ class CubeceptionHelm(cmd.Cmd):
 
     def do_exit(self, arg):
         'exit Cubeception Helm'
-        print('Exiting')
+        print('Walkin\' the plank')
         return True
 
 def parse(arg):
@@ -210,4 +210,11 @@ def parse(arg):
     return tuple(map(float, arg.split()))
 
 if __name__ == '__main__':
-    CubeceptionHelm().cmdloop()
+    running = True
+    while(running):
+        try:
+            CubeceptionHelm().cmdloop()
+            running = False
+        except:
+            print('Ye scurrvy dog')
+            running = True
