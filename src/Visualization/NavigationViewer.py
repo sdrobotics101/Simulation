@@ -36,12 +36,14 @@ client = pydsm.Client(SERVERID, CLIENTID, True)
 def main(stdscr):
     try:
         global outputs
+        global health
         global angular
         global linear
         global kill
 
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
         while(True):
             stdscr.clear()
 
@@ -61,13 +63,14 @@ def main(stdscr):
             else:
                 stdscr.addstr(0, 20, "HEALTH", curses.color_pair(1))
             for i in range(8):
+                stdscr.addstr(i+1, 20, str(i)+":")
                 if health.saturated & (1 << i):
                     if health.direction & (1 << i):
-                        stdscr.addstr(i+1, 20, str(i)+": +")
+                        stdscr.addstr(i+1, 23, "+", curses.color_pair(1))
                     else:
-                        stdscr.addstr(i+1, 20, str(i)+": -")
+                        stdscr.addstr(i+1, 23, "-", curses.color_pair(1))
                 else:
-                    stdscr.addstr(i+1, 20, str(i)+": .")
+                    stdscr.addstr(i+1, 23, ".", curses.color_pair(2))
 
             angularData, active = client.getRemoteBufferContents("angular", ipaddress, serverid)
             if (active):
@@ -92,10 +95,12 @@ def main(stdscr):
             killData, active = client.getRemoteBufferContents("kill", ipaddress, serverid)
             if (active):
                 kill = Unpack(Kill, killData)
-            if (kill.isKilled):
-                stdscr.addstr(0, 80, "KILLED", curses.color_pair(1))
+                if (kill.isKilled):
+                    stdscr.addstr(0, 80, "KILLED", curses.color_pair(1))
+                else:
+                    stdscr.addstr(0, 80, "ACTIVE", curses.color_pair(2))
             else:
-                stdscr.addstr(0, 80, "ACTIVE", curses.color_pair(2))
+                stdscr.addstr(0, 80, "INACTIVE", curses.color_pair(3))
 
             stdscr.refresh()
             time.sleep(0.1)
