@@ -8,17 +8,29 @@ from Serialization import *
 import pydsm
 
 outputs = Outputs()
-
 for i in range(8):
-    outputs.motors[i] = i/10.0
+    outputs.motors[i] = i * 10
+
+health = Health()
+health.saturated = 0x00
+health.direction = 0x00
+
+kill = Kill()
+kill.isKilled = True
 
 client = pydsm.Client(44, 102, True)
 
 client.registerLocalBuffer("outputs", sizeof(Outputs), False)
+client.registerLocalBuffer("health", sizeof(Health), False)
+client.registerLocalBuffer("kill", sizeof(Kill), False)
 time.sleep(0.1)
 
 if (client.setLocalBufferContents("outputs", Pack(outputs))):
     print("set outputs")
+if (client.setLocalBufferContents("health", Pack(health))):
+    print("set health")
+if (client.setLocalBufferContents("kill", Pack(kill))):
+    print("set kill")
 
 try:
     while True:

@@ -32,10 +32,10 @@ angular.acc[0] = 0
 angular.acc[0] = 0
 
 # W, X, Y, Z
-angular.pos[0] = 0
+angular.pos[0] = 1
 angular.pos[1] = 0
 angular.pos[2] = 0
-angular.pos[3] = 1
+angular.pos[3] = 0
 
 client = pydsm.Client(43, 100, True)
 
