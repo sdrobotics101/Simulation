@@ -72,10 +72,10 @@ def update():
     controlInput.mode = BitArray(mode).uint
     client.setLocalBufferContents(MASTER_CONTROL, Pack(controlInput))
 
-def resetSensor(arg):
-    sensorReset.pos[xaxis] = arg[xaxis]
-    sensorReset.pos[yaxis] = arg[yaxis]
-    sensorReset.pos[zaxis] = arg[zaxis]
+def resetSensor(x, y ,z):
+    sensorReset.pos[xaxis] = x
+    sensorReset.pos[yaxis] = y
+    sensorReset.pos[zaxis] = z
     sensorReset.reset = not sensorReset.reset
     client.setLocalBufferContents(MASTER_SENSOR_RESET, Pack(sensorReset))
 
