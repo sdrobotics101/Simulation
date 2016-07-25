@@ -7,6 +7,9 @@ from Serialization import *
 
 import pydsm
 
+SERVERID = MOTOR_SERVER_ID
+CLIENTID = 101
+
 angular = PhysicalOutput()
 linear  = PhysicalOutput()
 for i in range(3):
@@ -15,7 +18,7 @@ for i in range(3):
     linear.force[i]   = i+3
     linear.torque[i]  = 0
 
-client = pydsm.Client(44, 103, True)
+client = pydsm.Client(SERVERID, CLIENTID, True)
 
 client.registerLocalBuffer("angular", sizeof(PhysicalOutput), False)
 client.registerLocalBuffer("linear", sizeof(PhysicalOutput), False)

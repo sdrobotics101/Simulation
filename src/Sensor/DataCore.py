@@ -4,8 +4,12 @@ sys.path.append("../Dependencies/PythonSharedBuffers/src")
 
 from Sensor import *
 from Serialization import *
+from Constants import *
 
 import pydsm
+
+SERVERID = SENSOR_SERVER_ID
+CLIENTID = 100
 
 data = Data()
 
@@ -28,7 +32,7 @@ data.isEnabled[1] = True
 data.isEnabled[2] = True
 data.isEnabled[3] = True
 
-client = pydsm.Client(43, 101, True)
+client = pydsm.Client(SERVERID, CLIENTID, True)
 
 client.registerLocalBuffer("data", sizeof(Data), False)
 time.sleep(0.1)

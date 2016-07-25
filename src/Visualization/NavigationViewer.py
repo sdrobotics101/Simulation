@@ -9,6 +9,9 @@ from Serialization import *
 
 import pydsm
 
+SERVERID = 254
+CLIENTID = 100
+
 outputs = Outputs()
 for i in range(8):
     outputs.motors[i] = 0
@@ -28,7 +31,7 @@ for i in range(3):
 kill = Kill()
 kill.isKilled = False
 
-client = pydsm.Client(254, 100, True)
+client = pydsm.Client(SERVERID, CLIENTID, True)
 
 def main(stdscr):
     try:
@@ -95,7 +98,7 @@ def main(stdscr):
         return
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Combination Core Viewer")
+    parser = argparse.ArgumentParser(description="Navigation Viewer")
     parser.add_argument('ipaddress', nargs=1, help='ipaddress of remote server')
     parser.add_argument('serverid', nargs=1, type=int, help='server ID of remote server')
     args = parser.parse_args()

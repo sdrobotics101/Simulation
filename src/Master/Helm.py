@@ -10,8 +10,8 @@ from Constants import *
 
 import pydsm
 
-SERVERID = 42
-CLIENTID = 103
+SERVERID = MASTER_SERVER_ID
+CLIENTID = 100
 
 # Bit indices for mode byte
 MODE_ANGULAR_X = 7
@@ -63,6 +63,7 @@ client = pydsm.Client(SERVERID, CLIENTID, True)
 
 client.registerLocalBuffer(MASTER_CONTROL,      sizeof(ControlInput), False)
 client.registerLocalBuffer(MASTER_SENSOR_RESET, sizeof(SensorReset),  False)
+time.sleep(0.1)
 
 client.setLocalBufferContents(MASTER_CONTROL,      Pack(controlInput))
 client.setLocalBufferContents(MASTER_SENSOR_RESET, Pack(sensorReset))

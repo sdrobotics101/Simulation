@@ -7,6 +7,9 @@ from Serialization import *
 
 import pydsm
 
+SERVERID = MOTOR_SERVER_ID
+CLIENTID = 100
+
 outputs = Outputs()
 for i in range(8):
     outputs.motors[i] = i * 10
@@ -18,7 +21,7 @@ health.direction = 0x00
 kill = Kill()
 kill.isKilled = True
 
-client = pydsm.Client(44, 102, True)
+client = pydsm.Client(SERVERID, 100, True)
 
 client.registerLocalBuffer("outputs", sizeof(Outputs), False)
 client.registerLocalBuffer("health", sizeof(Health), False)
