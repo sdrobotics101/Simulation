@@ -7,6 +7,7 @@ sys.path.append("../Dependencies/PythonSharedBuffers/src")
 from Sensor import *
 from Serialization import *
 from Constants import *
+from QuaternionFuncs import *
 
 import pydsm
 
@@ -91,21 +92,34 @@ def main(stdscr):
             else:
                 stdscr.addstr(0, 20, "ANGULAR", curses.color_pair(1))
 
+            orientation = (angular.pos[QUAT_W],
+                           angular.pos[QUAT_X],
+                           angular.pos[QUAT_Y],
+                           angular.pos[QUAT_Z])
+            orientation = normalize(orientation)
+            transformedX = qv_mult(orientation, (1, 0, 0))
+            transformedY = qv_mult(orientation, (0, 1, 0))
+
             stdscr.addstr(1, 21, "POS")
-            stdscr.addstr(2, 22, "W: "+str(round(angular.pos[QUAT_W], 2)))
-            stdscr.addstr(3, 22, "X: "+str(round(angular.pos[QUAT_X], 2)))
-            stdscr.addstr(4, 22, "Y: "+str(round(angular.pos[QUAT_Y], 2)))
-            stdscr.addstr(5, 22, "Z: "+str(round(angular.pos[QUAT_Z], 2)))
+            stdscr.addstr(2, 22, "X:")
+            stdscr.addstr(3, 22, "Y:")
+            stdscr.addstr(4, 22, "Z:")
+            stdscr.addstr(2, 25, str(round(transformedX[xaxis], 2)))
+            stdscr.addstr(3, 25, str(round(transformedX[yaxis], 2)))
+            stdscr.addstr(4, 25, str(round(transformedX[zaxis], 2)))
+            stdscr.addstr(2, 30, str(round(transformedY[xaxis], 2)))
+            stdscr.addstr(3, 30, str(round(transformedY[yaxis], 2)))
+            stdscr.addstr(4, 30, str(round(transformedY[zaxis], 2)))
 
-            stdscr.addstr(6, 21, "VEL")
-            stdscr.addstr(7, 22, "X: "+str(round(angular.vel[xaxis], 2)))
-            stdscr.addstr(8, 22, "Y: "+str(round(angular.vel[yaxis], 2)))
-            stdscr.addstr(9, 22, "Z: "+str(round(angular.vel[zaxis], 2)))
+            stdscr.addstr(5, 21, "VEL")
+            stdscr.addstr(6, 22, "X: "+str(round(angular.vel[xaxis], 2)))
+            stdscr.addstr(7, 22, "Y: "+str(round(angular.vel[yaxis], 2)))
+            stdscr.addstr(8, 22, "Z: "+str(round(angular.vel[zaxis], 2)))
 
-            stdscr.addstr(10, 21, "ACC")
-            stdscr.addstr(11, 22, "X: "+str(round(angular.acc[xaxis], 2)))
-            stdscr.addstr(12, 22, "Y: "+str(round(angular.acc[yaxis], 2)))
-            stdscr.addstr(13, 22, "Z: "+str(round(angular.acc[zaxis], 2)))
+            stdscr.addstr(9, 21, "ACC")
+            stdscr.addstr(10, 22, "X: "+str(round(angular.acc[xaxis], 2)))
+            stdscr.addstr(11, 22, "Y: "+str(round(angular.acc[yaxis], 2)))
+            stdscr.addstr(12, 22, "Z: "+str(round(angular.acc[zaxis], 2)))
 
             linearData, active = client.getRemoteBufferContents("linear", ipaddress, serverid)
             if (active):
