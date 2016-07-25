@@ -1,4 +1,5 @@
 import time
+import math
 import cmd
 import sys
 sys.path.append("../Dependencies/PythonSharedBuffers/src")
@@ -6,6 +7,7 @@ sys.path.append("../Dependencies/PythonSharedBuffers/src")
 from Sensor import *
 from Serialization import *
 from Constants import *
+from QuaternionFuncs import *
 
 import pydsm
 
@@ -38,11 +40,15 @@ def update():
     client.setLocalBufferContents(SENSORS_ANGULAR, Pack(angular))
     client.setLocalBufferContents(SENSORS_LINEAR,  Pack(linear))
 
-def ap(w, x, y, z):
-    angular.pos[QUAT_W] = w
-    angular.pos[QUAT_X] = x
-    angular.pos[QUAT_Y] = y
-    angular.pos[QUAT_Z] = z
+def ap(x, y, z):
+    qx = axisangle_to_q((1, 0, 0), math.radians(x))
+    qy = axisangle_to_q((0, 1, 0), math.radians(y))
+    qz = axisangle_to_q((0, 0, 1), math.radians(z))
+    q = q_mult(qx, q_mult(qy, qz))
+    angular.pos[QUAT_W] = q[0]
+    angular.pos[QUAT_X] = q[1]
+    angular.pos[QUAT_Y] = q[2]
+    angular.pos[QUAT_Z] = q[3]
     update()
 
 def av(x, y, z):

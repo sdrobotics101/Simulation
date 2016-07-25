@@ -96,7 +96,10 @@ def main(stdscr):
                            angular.pos[QUAT_X],
                            angular.pos[QUAT_Y],
                            angular.pos[QUAT_Z])
-            orientation = normalize(orientation)
+            try:
+                orientation = normalize(orientation)
+            except:
+                orientation = (1, 0, 0, 0)
             transformedX = qv_mult(orientation, (1, 0, 0))
             transformedY = qv_mult(orientation, (0, 1, 0))
 
