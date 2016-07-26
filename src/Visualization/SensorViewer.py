@@ -98,7 +98,7 @@ def main(stdscr):
                            angular.pos[QUAT_Z])
             try:
                 orientation = normalize(orientation)
-            except:
+            except ZeroDivisionError:
                 orientation = (1, 0, 0, 0)
             transformedX = qv_mult(orientation, (1, 0, 0))
             transformedY = qv_mult(orientation, (0, 1, 0))
