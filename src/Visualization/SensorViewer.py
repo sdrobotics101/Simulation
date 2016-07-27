@@ -97,7 +97,7 @@ def main(stdscr):
                            angular.pos[QUAT_Y],
                            angular.pos[QUAT_Z])
             try:
-                orientation = normalize(orientation)
+                orientation = q_conjugate(normalize(orientation))
             except ZeroDivisionError:
                 orientation = (1, 0, 0, 0)
             transformedX = qv_mult(orientation, (1, 0, 0))
@@ -110,9 +110,9 @@ def main(stdscr):
             stdscr.addstr(2, 25, str(round(transformedX[xaxis], 2)))
             stdscr.addstr(3, 25, str(round(transformedX[yaxis], 2)))
             stdscr.addstr(4, 25, str(round(transformedX[zaxis], 2)))
-            stdscr.addstr(2, 30, str(round(transformedY[xaxis], 2)))
-            stdscr.addstr(3, 30, str(round(transformedY[yaxis], 2)))
-            stdscr.addstr(4, 30, str(round(transformedY[zaxis], 2)))
+            stdscr.addstr(2, 32, str(round(transformedY[xaxis], 2)))
+            stdscr.addstr(3, 32, str(round(transformedY[yaxis], 2)))
+            stdscr.addstr(4, 32, str(round(transformedY[zaxis], 2)))
 
             stdscr.addstr(5, 21, "VEL")
             stdscr.addstr(6, 22, "X: "+str(round(angular.vel[xaxis], 2)))
