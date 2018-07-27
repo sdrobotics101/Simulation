@@ -21,14 +21,14 @@ for i in range(3):
 
 client = pydsm.Client(SERVERID, CLIENTID, True)
 
-client.registerLocalBuffer("angular", sizeof(PhysicalOutput), False)
-client.registerLocalBuffer("linear", sizeof(PhysicalOutput), False)
+client.registerLocalBuffer("nav_angular", sizeof(PhysicalOutput), False)
+client.registerLocalBuffer("nav_linear", sizeof(PhysicalOutput), False)
 time.sleep(0.1)
 
-if (client.setLocalBufferContents("angular", Pack(angular))):
-    print("set angular")
-if (client.setLocalBufferContents("linear", Pack(linear))):
-    print("set linear")
+if (client.setLocalBufferContents("nav_angular", Pack(angular))):
+    print("set nav_angular")
+if (client.setLocalBufferContents("nav_linear", Pack(linear))):
+    print("set nav_linear")
 
 try:
     while True:

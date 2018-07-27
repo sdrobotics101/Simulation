@@ -73,7 +73,7 @@ def main(stdscr):
                 else:
                     stdscr.addstr(i+1, 23, ".", curses.color_pair(2))
 
-            angularData, active = client.getRemoteBufferContents("angular", ipaddress, serverid)
+            angularData, active = client.getRemoteBufferContents("nav_angular", ipaddress, serverid)
             if (active):
                 stdscr.addstr(0, 40, "ANGULAR", curses.color_pair(2))
                 angular = Unpack(PhysicalOutput, angularData)
@@ -83,7 +83,7 @@ def main(stdscr):
             stdscr.addstr(2, 40, "TY: "+str(round(angular.torque[1], 2)))
             stdscr.addstr(3, 40, "TZ: "+str(round(angular.torque[2], 2)))
 
-            linearData, active = client.getRemoteBufferContents("linear", ipaddress, serverid)
+            linearData, active = client.getRemoteBufferContents("nav_linear", ipaddress, serverid)
             if (active):
                 stdscr.addstr(0, 60, "LINEAR", curses.color_pair(2))
                 linear = Unpack(PhysicalOutput, linearData)
@@ -121,8 +121,8 @@ if __name__ == "__main__":
 
     client.registerRemoteBuffer("outputs", ipaddress, serverid)
     client.registerRemoteBuffer("health", ipaddress, serverid)
-    client.registerRemoteBuffer("angular", ipaddress, serverid)
-    client.registerRemoteBuffer("linear", ipaddress, serverid)
+    client.registerRemoteBuffer("nav_angular", ipaddress, serverid)
+    client.registerRemoteBuffer("nav_linear", ipaddress, serverid)
     client.registerRemoteBuffer("kill", ipaddress, serverid)
     time.sleep(0.1)
 

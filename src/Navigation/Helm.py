@@ -13,8 +13,8 @@ import pydsm
 SERVERID = MOTOR_SERVER_ID
 CLIENTID = 100
 
-LINEAR_NAME  = "linear"
-ANGULAR_NAME = "angular"
+LINEAR_NAME  = "nav_linear"
+ANGULAR_NAME = "nav_angular"
 
 linearCommand = PhysicalOutput()
 linearCommand.force[xaxis]  = 0
