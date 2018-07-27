@@ -11,6 +11,22 @@ from QuaternionFuncs import *
 
 import pydsm
 
+import math
+
+def quaternion_to_euler_angle(w, x, y, z):
+    ysqr = y * y
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + ysqr)
+    X = math.degrees(math.atan2(t0, t1))
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    Y = math.degrees(math.asin(t2))
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (ysqr + z * z)
+    Z = math.degrees(math.atan2(t3, t4))
+    return X, Y, Z
+
 SERVERID = 254
 CLIENTID = 101
 
@@ -100,19 +116,19 @@ def main(stdscr):
                 orientation = q_conjugate(normalize(orientation))
             except ZeroDivisionError:
                 orientation = (1, 0, 0, 0)
-            transformedX = qv_mult(orientation, (1, 0, 0))
-            transformedY = qv_mult(orientation, (0, 1, 0))
+
+            euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
+                                              angular.pos[QUAT_X],
+                                              angular.pos[QUAT_Y],
+                                              angular.pos[QUAT_Z])
 
             stdscr.addstr(1, 21, "POS")
             stdscr.addstr(2, 22, "X:")
             stdscr.addstr(3, 22, "Y:")
             stdscr.addstr(4, 22, "Z:")
-            stdscr.addstr(2, 25, str(round(transformedX[xaxis], 2)))
-            stdscr.addstr(3, 25, str(round(transformedX[yaxis], 2)))
-            stdscr.addstr(4, 25, str(round(transformedX[zaxis], 2)))
-            stdscr.addstr(2, 32, str(round(transformedY[xaxis], 2)))
-            stdscr.addstr(3, 32, str(round(transformedY[yaxis], 2)))
-            stdscr.addstr(4, 32, str(round(transformedY[zaxis], 2)))
+            stdscr.addstr(2, 25, str(round(euler[xaxis], 2)))
+            stdscr.addstr(3, 25, str(round(euler[yaxis], 2)))
+            stdscr.addstr(4, 25, str(round(euler[zaxis], 2)))
 
             stdscr.addstr(5, 21, "VEL")
             stdscr.addstr(6, 22, "X: "+str(round(angular.vel[xaxis], 2)))
