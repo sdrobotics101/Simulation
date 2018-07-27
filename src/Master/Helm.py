@@ -4,6 +4,7 @@ from bitstring import BitArray
 import sys
 import math
 sys.path.append("../Dependencies/PythonSharedBuffers/src")
+sys.path.append("../../../DistributedSharedMemory")
 
 from Master import *
 from Serialization import *

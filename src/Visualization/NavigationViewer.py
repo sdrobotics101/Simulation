@@ -3,6 +3,7 @@ import curses
 import time
 import sys
 sys.path.append("../Dependencies/PythonSharedBuffers/src")
+sys.path.append("../../../DistributedSharedMemory")
 
 from Navigation import *
 from Serialization import *
