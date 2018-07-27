@@ -12,7 +12,7 @@ from QuaternionFuncs import *
 import pydsm
 
 SERVERID = SENSOR_SERVER_ID
-CLIENTID = 102
+CLIENTID = 101
 
 angular = Angular()
 linear = Linear()
