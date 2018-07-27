@@ -2,13 +2,31 @@ import time
 import cmd
 from bitstring import BitArray
 import sys
+import math
 sys.path.append("../Dependencies/PythonSharedBuffers/src")
 
 from Master import *
 from Serialization import *
 from Constants import *
 
+from Sensor import *
+from QuaternionFuncs import *
+
 import pydsm
+
+def quaternion_to_euler_angle(w, x, y, z):
+    ysqr = y * y
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + ysqr)
+    X = math.degrees(math.atan2(t0, t1))
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    Y = math.degrees(math.asin(t2))
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (ysqr + z * z)
+    Z = math.degrees(math.atan2(t3, t4))
+    return X, Y, Z
 
 SERVERID = MASTER_SERVER_ID
 CLIENTID = 100
@@ -27,6 +45,18 @@ VEL = 0
 
 controlInput = ControlInput()
 sensorReset = SensorReset()
+
+angular = Angular()
+linear = Linear()
+for i in range(3):
+    angular.pos[i] = 0
+    angular.vel[i] = 0
+    angular.acc[i] = 0
+    linear.pos[i]  = 0
+    linear.vel[i]  = 0
+    linear.acc[i]  = 0
+angular.pos[0] = 1
+angular.pos[3] = 0
 
 # Default values
 # Angular X POS 0 0
@@ -65,6 +95,10 @@ client.registerLocalBuffer(MASTER_CONTROL,      sizeof(ControlInput), False)
 client.registerLocalBuffer(MASTER_SENSOR_RESET, sizeof(SensorReset),  False)
 time.sleep(0.1)
 
+client.registerRemoteBuffer("angular", "10.0.0.43", 43)
+client.registerRemoteBuffer("linear", "10.0.0.43", 43)
+time.sleep(0.1)
+
 client.setLocalBufferContents(MASTER_CONTROL,      Pack(controlInput))
 client.setLocalBufferContents(MASTER_SENSOR_RESET, Pack(sensorReset))
 
@@ -85,17 +119,53 @@ def lpx(pos, time):
     mode[MODE_LINEAR_X] = POS
     update()
 
+def rlpx(pos, time):
+    linearData, active = client.getRemoteBufferContents("linear", "10.0.0.43", 43)
+    if (active):
+        linear = Unpack(Linear, linearData)
+        controlInput.linear[xaxis].pos[0] = linear.pos[xaxis] + pos
+        controlInput.linear[xaxis].pos[1] = time
+        mode[MODE_LINEAR_X] = POS
+        update()
+        print("New setpoint: "+str(controlInput.linear[xaxis].pos[0]))
+    else:
+        print("No sensor input")
+
 def lpy(pos, time):
     controlInput.linear[yaxis].pos[0] = pos
     controlInput.linear[yaxis].pos[1] = time
     mode[MODE_LINEAR_Y] = POS
     update()
 
+def rlpy(pos, time):
+    linearData, active = client.getRemoteBufferContents("linear", "10.0.0.43", 43)
+    if (active):
+        linear = Unpack(Linear, linearData)
+        controlInput.linear[yaxis].pos[0] = linear.pos[yaxis] + pos
+        controlInput.linear[yaxis].pos[1] = time
+        mode[MODE_LINEAR_Y] = POS
+        update()
+        print("New setpoint: "+str(controlInput.linear[yaxis].pos[0]))
+    else:
+        print("No sensor input")
+
 def lpz(pos, time):
     controlInput.linear[zaxis].pos[0] = pos
     controlInput.linear[zaxis].pos[1] = time
     mode[MODE_LINEAR_Z] = POS
     update()
+
+def rlpz(pos, time):
+    linearData, active = client.getRemoteBufferContents("linear", "10.0.0.43", 43)
+    if (active):
+        linear = Unpack(Linear, linearData)
+        controlInput.linear[zaxis].pos[0] = linear.pos[zaxis] + pos
+        controlInput.linear[zaxis].pos[1] = time
+        mode[MODE_LINEAR_Z] = POS
+        update()
+        print("New setpoint: "+str(controlInput.linear[zaxis].pos[0]))
+    else:
+        print("No sensor input")
 
 def lvx(vel):
     controlInput.linear[xaxis].vel = vel
@@ -118,17 +188,77 @@ def apx(pos, time):
     mode[MODE_ANGULAR_X] = POS
     update()
 
+def rapx(pos, time):
+    angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
+    if (active):
+        angular = Unpack(Angular, angularData)
+        euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
+                                          angular.pos[QUAT_X],
+                                          angular.pos[QUAT_Y],
+                                          angular.pos[QUAT_Z])
+        controlInput.angular[xaxis].pos[0] = euler[xaxis] + pos
+        controlInput.angular[xaxis].pos[1] = time
+        while controlInput.angular[xaxis].pos[0] > 180:
+            controlInput.angular[xaxis].pos[0] = controlInput.angular[xaxis].pos[0] - 360
+        while controlInput.angular[xaxis].pos[0] < -180:
+            controlInput.angular[xaxis].pos[0] = controlInput.angular[xaxis].pos[0] + 360
+        mode[MODE_ANGULAR_X] = POS
+        update()
+        print("New setpoint: "+str(controlInput.angular[xaxis].pos[0]))
+    else:
+        print("No sensor input")
+
 def apy(pos, time):
     controlInput.angular[yaxis].pos[0] = pos
     controlInput.angular[yaxis].pos[1] = time
     mode[MODE_ANGULAR_Y] = POS
     update()
 
+def rapy(pos, time):
+    angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
+    if (active):
+        angular = Unpack(Angular, angularData)
+        euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
+                                          angular.pos[QUAT_X],
+                                          angular.pos[QUAT_Y],
+                                          angular.pos[QUAT_Z])
+        controlInput.angular[yaxis].pos[0] = euler[yaxis] + pos
+        controlInput.angular[yaxis].pos[1] = time
+        while controlInput.angular[yaxis].pos[0] > 180:
+            controlInput.angular[yaxis].pos[0] = controlInput.angular[yaxis].pos[0] - 360
+        while controlInput.angular[yaxis].pos[0] < -180:
+            controlInput.angular[yaxis].pos[0] = controlInput.angular[yaxis].pos[0] + 360
+        mode[MODE_ANGULAR_Y] = POS
+        update()
+        print("New setpoint: "+str(controlInput.angular[yaxis].pos[0]))
+    else:
+        print("No sensor input")
+
 def apz(pos, time):
     controlInput.angular[zaxis].pos[0] = pos
     controlInput.angular[zaxis].pos[1] = time
     mode[MODE_ANGULAR_Z] = POS
     update()
+
+def rapz(pos, time):
+    angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
+    if (active):
+        angular = Unpack(Angular, angularData)
+        euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
+                                          angular.pos[QUAT_X],
+                                          angular.pos[QUAT_Y],
+                                          angular.pos[QUAT_Z])
+        controlInput.angular[zaxis].pos[0] = euler[zaxis] + pos
+        controlInput.angular[zaxis].pos[1] = time
+        while controlInput.angular[zaxis].pos[0] > 180:
+            controlInput.angular[zaxis].pos[0] = controlInput.angular[zaxis].pos[0] - 360
+        while controlInput.angular[zaxis].pos[0] < -180:
+            controlInput.angular[zaxis].pos[0] = controlInput.angular[zaxis].pos[0] + 360
+        mode[MODE_ANGULAR_Z] = POS
+        update()
+        print("New setpoint: "+str(controlInput.angular[zaxis].pos[0]))
+    else:
+        print("No sensor input")
 
 def avx(vel):
     controlInput.angular[xaxis].vel = vel
@@ -157,13 +287,25 @@ class CubeceptionHelm(cmd.Cmd):
         'set linear position x'
         lpx(*parse(arg))
 
+    def do_rlpx(self, arg):
+        'set relative linear position x'
+        rlpx(*parse(arg))
+
     def do_lpy(self, arg):
         'set linear position y'
         lpy(*parse(arg))
 
+    def do_rlpy(self, arg):
+        'set relative linear position y'
+        rlpy(*parse(arg))
+
     def do_lpz(self, arg):
         'set linear position z'
         lpz(*parse(arg))
+
+    def do_rlpz(self, arg):
+        'set relative linear position z'
+        rlpz(*parse(arg))
 
     def do_lvx(self, arg):
         'set linear velocity x'
@@ -181,13 +323,25 @@ class CubeceptionHelm(cmd.Cmd):
         'set angular position x'
         apx(*parse(arg))
 
+    def do_rapx(self, arg):
+        'set relative angular position x'
+        rapx(*parse(arg))
+
     def do_apy(self, arg):
         'set angular position y'
         apy(*parse(arg))
 
+    def do_rapy(self, arg):
+        'set relative angular position y'
+        rapy(*parse(arg))
+
     def do_apz(self, arg):
         'set angular position z'
         apz(*parse(arg))
+
+    def do_rapz(self, arg):
+        'set relative angular position z'
+        rapz(*parse(arg))
 
     def do_avx(self, arg):
         'set angular velocity x'
