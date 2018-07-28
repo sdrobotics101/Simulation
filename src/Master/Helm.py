@@ -194,18 +194,19 @@ def rapx(pos, time):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
-        orientation = (angular.pos[QUAT_W],
-                       angular.pos[QUAT_X],
-                       angular.pos[QUAT_Y],
-                       angular.pos[QUAT_Z])
-        try:
-            orientation = q_conjugate(normalize(orientation))
-        except ZeroDivisionError:
-            orientation = (1, 0, 0, 0)
+        # orientation = (angular.pos[QUAT_W],
+        #                angular.pos[QUAT_X],
+        #                angular.pos[QUAT_Y],
+        #                angular.pos[QUAT_Z])
+        # try:
+        #     orientation = q_conjugate(normalize(orientation))
+        # except ZeroDivisionError:
+        #     orientation = (1, 0, 0, 0)
 
-        euler = quaternion_to_euler_angle(orientation)
+        # euler = quaternion_to_euler_angle(orientation)
 
-        controlInput.angular[xaxis].pos[0] = euler[xaxis] + pos
+        # sensor was rigged to output euler angles through acc field
+        controlInput.angular[xaxis].pos[0] = angular.acc[xaxis] + pos
         controlInput.angular[xaxis].pos[1] = time
         while controlInput.angular[xaxis].pos[0] > 180:
             controlInput.angular[xaxis].pos[0] = controlInput.angular[xaxis].pos[0] - 360
@@ -227,17 +228,19 @@ def rapy(pos, time):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
-        orientation = (angular.pos[QUAT_W],
-                       angular.pos[QUAT_X],
-                       angular.pos[QUAT_Y],
-                       angular.pos[QUAT_Z])
-        try:
-            orientation = q_conjugate(normalize(orientation))
-        except ZeroDivisionError:
-            orientation = (1, 0, 0, 0)
+        # orientation = (angular.pos[QUAT_W],
+        #                angular.pos[QUAT_X],
+        #                angular.pos[QUAT_Y],
+        #                angular.pos[QUAT_Z])
+        # try:
+        #     orientation = q_conjugate(normalize(orientation))
+        # except ZeroDivisionError:
+        #     orientation = (1, 0, 0, 0)
 
-        euler = quaternion_to_euler_angle(orientation)
-        controlInput.angular[yaxis].pos[0] = euler[yaxis] + pos
+        # euler = quaternion_to_euler_angle(orientation)
+
+        # sensor was rigged to output euler angles through acc field
+        controlInput.angular[yaxis].pos[0] = angular.acc[yaxis] + pos
         controlInput.angular[yaxis].pos[1] = time
         while controlInput.angular[yaxis].pos[0] > 180:
             controlInput.angular[yaxis].pos[0] = controlInput.angular[yaxis].pos[0] - 360
@@ -259,17 +262,19 @@ def rapz(pos, time):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
-        orientation = (angular.pos[QUAT_W],
-                       angular.pos[QUAT_X],
-                       angular.pos[QUAT_Y],
-                       angular.pos[QUAT_Z])
-        try:
-            orientation = q_conjugate(normalize(orientation))
-        except ZeroDivisionError:
-            orientation = (1, 0, 0, 0)
+        # orientation = (angular.pos[QUAT_W],
+        #                angular.pos[QUAT_X],
+        #                angular.pos[QUAT_Y],
+        #                angular.pos[QUAT_Z])
+        # try:
+        #     orientation = q_conjugate(normalize(orientation))
+        # except ZeroDivisionError:
+        #     orientation = (1, 0, 0, 0)
 
-        euler = quaternion_to_euler_angle(orientation)
-        controlInput.angular[zaxis].pos[0] = euler[zaxis] + pos
+        # euler = quaternion_to_euler_angle(orientation)
+
+        # sensor was rigged to output euler angles through acc field
+        controlInput.angular[zaxis].pos[0] = angular.acc[zaxis] + pos
         controlInput.angular[zaxis].pos[1] = time
         while controlInput.angular[zaxis].pos[0] > 180:
             controlInput.angular[zaxis].pos[0] = controlInput.angular[zaxis].pos[0] - 360

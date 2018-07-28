@@ -134,7 +134,8 @@ def main(stdscr):
             stdscr.addstr(7, 22, "Y: "+str(round(angular.vel[yaxis], 2)))
             stdscr.addstr(8, 22, "Z: "+str(round(angular.vel[zaxis], 2)))
 
-            stdscr.addstr(9, 21, "ACC")
+            # sensor was rigged to output euler angles through acc field
+            stdscr.addstr(9, 21, "EULER")
             stdscr.addstr(10, 22, "X: "+str(round(angular.acc[xaxis], 2)))
             stdscr.addstr(11, 22, "Y: "+str(round(angular.acc[yaxis], 2)))
             stdscr.addstr(12, 22, "Z: "+str(round(angular.acc[zaxis], 2)))
