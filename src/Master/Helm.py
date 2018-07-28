@@ -15,19 +15,20 @@ from QuaternionFuncs import *
 
 import pydsm
 
-def quaternion_to_euler_angle(w, x, y, z):
+def quaternion_to_euler_angle(q):
+    w, x, y, z = q
     ysqr = y * y
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + ysqr)
-    X = math.degrees(math.atan2(t0, t1))
+    ex = math.degrees(math.atan2(t0, t1))
     t2 = +2.0 * (w * y - z * x)
     t2 = +1.0 if t2 > +1.0 else t2
     t2 = -1.0 if t2 < -1.0 else t2
-    Y = math.degrees(math.asin(t2))
+    ey = math.degrees(math.asin(t2))
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (ysqr + z * z)
-    Z = math.degrees(math.atan2(t3, t4))
-    return X, Y, Z
+    ez = math.degrees(math.atan2(t3, t4))
+    return ex, ey, ez
 
 SERVERID = MASTER_SERVER_ID
 CLIENTID = 100
@@ -193,10 +194,17 @@ def rapx(pos, time):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
-        euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
-                                          angular.pos[QUAT_X],
-                                          angular.pos[QUAT_Y],
-                                          angular.pos[QUAT_Z])
+        orientation = (angular.pos[QUAT_W],
+                       angular.pos[QUAT_X],
+                       angular.pos[QUAT_Y],
+                       angular.pos[QUAT_Z])
+        try:
+            orientation = q_conjugate(normalize(orientation))
+        except ZeroDivisionError:
+            orientation = (1, 0, 0, 0)
+
+        euler = quaternion_to_euler_angle(orientation)
+
         controlInput.angular[xaxis].pos[0] = euler[xaxis] + pos
         controlInput.angular[xaxis].pos[1] = time
         while controlInput.angular[xaxis].pos[0] > 180:
@@ -219,10 +227,16 @@ def rapy(pos, time):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
-        euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
-                                          angular.pos[QUAT_X],
-                                          angular.pos[QUAT_Y],
-                                          angular.pos[QUAT_Z])
+        orientation = (angular.pos[QUAT_W],
+                       angular.pos[QUAT_X],
+                       angular.pos[QUAT_Y],
+                       angular.pos[QUAT_Z])
+        try:
+            orientation = q_conjugate(normalize(orientation))
+        except ZeroDivisionError:
+            orientation = (1, 0, 0, 0)
+
+        euler = quaternion_to_euler_angle(orientation)
         controlInput.angular[yaxis].pos[0] = euler[yaxis] + pos
         controlInput.angular[yaxis].pos[1] = time
         while controlInput.angular[yaxis].pos[0] > 180:
@@ -245,10 +259,16 @@ def rapz(pos, time):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
-        euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
-                                          angular.pos[QUAT_X],
-                                          angular.pos[QUAT_Y],
-                                          angular.pos[QUAT_Z])
+        orientation = (angular.pos[QUAT_W],
+                       angular.pos[QUAT_X],
+                       angular.pos[QUAT_Y],
+                       angular.pos[QUAT_Z])
+        try:
+            orientation = q_conjugate(normalize(orientation))
+        except ZeroDivisionError:
+            orientation = (1, 0, 0, 0)
+
+        euler = quaternion_to_euler_angle(orientation)
         controlInput.angular[zaxis].pos[0] = euler[zaxis] + pos
         controlInput.angular[zaxis].pos[1] = time
         while controlInput.angular[zaxis].pos[0] > 180:
