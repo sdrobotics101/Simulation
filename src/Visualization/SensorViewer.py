@@ -14,19 +14,20 @@ import pydsm
 
 import math
 
-def quaternion_to_euler_angle(w, x, y, z):
+def quaternion_to_euler_angle(q):
+    w, x, y, z = q
     ysqr = y * y
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + ysqr)
-    X = math.degrees(math.atan2(t0, t1))
+    ex = math.degrees(math.atan2(t0, t1))
     t2 = +2.0 * (w * y - z * x)
     t2 = +1.0 if t2 > +1.0 else t2
     t2 = -1.0 if t2 < -1.0 else t2
-    Y = math.degrees(math.asin(t2))
+    ey = math.degrees(math.asin(t2))
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (ysqr + z * z)
-    Z = math.degrees(math.atan2(t3, t4))
-    return X, Y, Z
+    ez = math.degrees(math.atan2(t3, t4))
+    return ex, ey, ez
 
 SERVERID = 254
 CLIENTID = 101
@@ -118,10 +119,7 @@ def main(stdscr):
             except ZeroDivisionError:
                 orientation = (1, 0, 0, 0)
 
-            euler = quaternion_to_euler_angle(angular.pos[QUAT_W],
-                                              angular.pos[QUAT_X],
-                                              angular.pos[QUAT_Y],
-                                              angular.pos[QUAT_Z])
+            euler = quaternion_to_euler_angle(orientation)
 
             stdscr.addstr(1, 21, "POS")
             stdscr.addstr(2, 22, "X:")
