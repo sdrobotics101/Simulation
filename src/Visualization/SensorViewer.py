@@ -115,7 +115,8 @@ def main(stdscr):
                            angular.pos[QUAT_Y],
                            angular.pos[QUAT_Z])
             try:
-                orientation = q_conjugate(normalize(orientation))
+                # orientation = q_conjugate(normalize(orientation))
+                orientation = normalize(orientation)
             except ZeroDivisionError:
                 orientation = (1, 0, 0, 0)
 
