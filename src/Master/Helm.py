@@ -115,54 +115,54 @@ def resetSensor(x, y ,z):
     sensorReset.reset = not sensorReset.reset
     client.setLocalBufferContents(MASTER_SENSOR_RESET, Pack(sensorReset))
 
-def lpx(pos, time):
+def lpx(pos, t = 0):
     controlInput.linear[xaxis].pos[0] = pos
-    controlInput.linear[xaxis].pos[1] = time
+    controlInput.linear[xaxis].pos[1] = t
     mode[MODE_LINEAR_X] = POS
     update()
 
-def rlpx(pos, time):
+def rlpx(pos, t = 0):
     linearData, active = client.getRemoteBufferContents("linear", "10.0.0.43", 43)
     if (active):
         linear = Unpack(Linear, linearData)
         controlInput.linear[xaxis].pos[0] = linear.pos[xaxis] + pos
-        controlInput.linear[xaxis].pos[1] = time
+        controlInput.linear[xaxis].pos[1] = t
         mode[MODE_LINEAR_X] = POS
         update()
         print("New setpoint: "+str(controlInput.linear[xaxis].pos[0]))
     else:
         print("No sensor input")
 
-def lpy(pos, time):
+def lpy(pos, t = 0):
     controlInput.linear[yaxis].pos[0] = pos
-    controlInput.linear[yaxis].pos[1] = time
+    controlInput.linear[yaxis].pos[1] = t
     mode[MODE_LINEAR_Y] = POS
     update()
 
-def rlpy(pos, time):
+def rlpy(pos, t = 0):
     linearData, active = client.getRemoteBufferContents("linear", "10.0.0.43", 43)
     if (active):
         linear = Unpack(Linear, linearData)
         controlInput.linear[yaxis].pos[0] = linear.pos[yaxis] + pos
-        controlInput.linear[yaxis].pos[1] = time
+        controlInput.linear[yaxis].pos[1] = t
         mode[MODE_LINEAR_Y] = POS
         update()
         print("New setpoint: "+str(controlInput.linear[yaxis].pos[0]))
     else:
         print("No sensor input")
 
-def lpz(pos, time):
+def lpz(pos, t = 0):
     controlInput.linear[zaxis].pos[0] = pos
-    controlInput.linear[zaxis].pos[1] = time
+    controlInput.linear[zaxis].pos[1] = t
     mode[MODE_LINEAR_Z] = POS
     update()
 
-def rlpz(pos, time):
+def rlpz(pos, t = 0):
     linearData, active = client.getRemoteBufferContents("linear", "10.0.0.43", 43)
     if (active):
         linear = Unpack(Linear, linearData)
         controlInput.linear[zaxis].pos[0] = linear.pos[zaxis] + pos
-        controlInput.linear[zaxis].pos[1] = time
+        controlInput.linear[zaxis].pos[1] = t
         mode[MODE_LINEAR_Z] = POS
         update()
         print("New setpoint: "+str(controlInput.linear[zaxis].pos[0]))
@@ -184,13 +184,13 @@ def lvz(vel):
     mode[MODE_LINEAR_Z] = VEL
     update()
 
-def apx(pos, time):
+def apx(pos, t = 0):
     controlInput.angular[xaxis].pos[0] = pos
-    controlInput.angular[xaxis].pos[1] = time
+    controlInput.angular[xaxis].pos[1] = t
     mode[MODE_ANGULAR_X] = POS
     update()
 
-def rapx(pos, time):
+def rapx(pos, t = 0):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
@@ -207,7 +207,7 @@ def rapx(pos, time):
 
         # sensor was rigged to output euler angles through acc field
         controlInput.angular[xaxis].pos[0] = angular.acc[xaxis] + pos
-        controlInput.angular[xaxis].pos[1] = time
+        controlInput.angular[xaxis].pos[1] = t
         while controlInput.angular[xaxis].pos[0] > 180:
             controlInput.angular[xaxis].pos[0] = controlInput.angular[xaxis].pos[0] - 360
         while controlInput.angular[xaxis].pos[0] < -180:
@@ -218,13 +218,13 @@ def rapx(pos, time):
     else:
         print("No sensor input")
 
-def apy(pos, time):
+def apy(pos, t = 0):
     controlInput.angular[yaxis].pos[0] = pos
-    controlInput.angular[yaxis].pos[1] = time
+    controlInput.angular[yaxis].pos[1] = t
     mode[MODE_ANGULAR_Y] = POS
     update()
 
-def rapy(pos, time):
+def rapy(pos, t = 0):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
@@ -241,7 +241,7 @@ def rapy(pos, time):
 
         # sensor was rigged to output euler angles through acc field
         controlInput.angular[yaxis].pos[0] = angular.acc[yaxis] + pos
-        controlInput.angular[yaxis].pos[1] = time
+        controlInput.angular[yaxis].pos[1] = t
         while controlInput.angular[yaxis].pos[0] > 180:
             controlInput.angular[yaxis].pos[0] = controlInput.angular[yaxis].pos[0] - 360
         while controlInput.angular[yaxis].pos[0] < -180:
@@ -252,13 +252,13 @@ def rapy(pos, time):
     else:
         print("No sensor input")
 
-def apz(pos, time):
+def apz(pos, t = 0):
     controlInput.angular[zaxis].pos[0] = pos
-    controlInput.angular[zaxis].pos[1] = time
+    controlInput.angular[zaxis].pos[1] = t
     mode[MODE_ANGULAR_Z] = POS
     update()
 
-def rapz(pos, time):
+def rapz(pos, t = 0):
     angularData, active = client.getRemoteBufferContents("angular", "10.0.0.43", 43)
     if (active):
         angular = Unpack(Angular, angularData)
@@ -275,7 +275,7 @@ def rapz(pos, time):
 
         # sensor was rigged to output euler angles through acc field
         controlInput.angular[zaxis].pos[0] = angular.acc[zaxis] + pos
-        controlInput.angular[zaxis].pos[1] = time
+        controlInput.angular[zaxis].pos[1] = t
         while controlInput.angular[zaxis].pos[0] > 180:
             controlInput.angular[zaxis].pos[0] = controlInput.angular[zaxis].pos[0] - 360
         while controlInput.angular[zaxis].pos[0] < -180:
