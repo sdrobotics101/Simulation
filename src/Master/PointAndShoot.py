@@ -7,28 +7,30 @@ sys.path.append("../../../DistributedSharedMemory")
 
 from Master import *
 from Sensor import *
+from Navigation import *
 from Serialization import *
 from Constants import *
 
 import pydsm
 
-WAIT_THRESH = 5
-DEPTH_THRESH = 0.35
+COUNT_THRESH = 5
+DEPTH_THRESH_ABOVE = 0.35
+DEPTH_THRESH_BELOW = 0.35
 TARGET_DEPTH = 1.0
-FORWARD_VEL = 320
+FORWARD_VEL = 100
 
 XAXIS = 0
 YAXIS = 1
 ZAXIS = 2
 
-SERVER_ID = 42
+SERVER_ID = MASTER_SERVER_ID
 CLIENT_ID = 93
 
 SENSOR_IP = "10.0.0.43"
 SENSOR_ID = 43
 
-NAVIGATION_IP = "10.0.0.43"
-NAVIGATION_ID = 43
+NAVIGATION_IP = "10.0.0.44"
+NAVIGATION_ID = 44
 
 # Bit indices for mode byte
 MODE_ANGULAR_X = 7
@@ -46,6 +48,7 @@ controlInput = ControlInput()
 sensorReset = SensorReset()
 angular = Angular()
 linear = Linear()
+kill = Kill()
 
 # Default values
 # Angular X POS 0 0
@@ -88,73 +91,123 @@ for i in range(3):
 angular.pos[0] = 1
 angular.pos[3] = 0
 
-client = pydsm.Client(SERVER_ID, CLIENT_ID, True)
-print("instantiated client")
+kill.isKilled = False
 
+client = pydsm.Client(SERVER_ID, CLIENT_ID, True)
+
+client.registerLocalBuffer("control", sizeof(ControlInput), False)
 client.registerLocalBuffer(MASTER_SENSOR_RESET, sizeof(SensorReset),  False)
-time.sleep(0.1)
+time.sleep(0.5)
+client.setLocalBufferContents("control", Pack(controlInput))
 client.setLocalBufferContents(MASTER_SENSOR_RESET, Pack(sensorReset))
-print("created local buffer: sensorreset")
+print("Created local buffers: control, sensorreset")
 
 client.registerRemoteBuffer("angular", SENSOR_IP, SENSOR_ID)
 client.registerRemoteBuffer("linear", SENSOR_IP, SENSOR_ID)
+client.registerRemoteBuffer("kill", NAVIGATION_IP, NAVIGATION_ID)
 time.sleep(0.1)
-print("registered remote buffers: angular,linear")
+print("Registered remote buffers: angular,linear,kill")
 
-def waitForDepth():
+ABOVE = True
+BELOW = False
+def waitForDepth(depth_threshold, count_threshold, condition):
+    print("Waiting for depth " + \
+          ("ABOVE " if condition == ABOVE else "BELOW ") + \
+          str(depth_threshold) + \
+          " for " + \
+          str(count_threshold) + \
+          " counts")
     count = 0
-    while count < WAIT_THRESH:
+    while count < count_threshold:
         linearData, active = client.getRemoteBufferContents("linear", SENSOR_IP, SENSOR_ID)
         if active:
             linear = Unpack(Linear, linearData)
             depth = linear.pos[ZAXIS]
-            print("depth: " + str(depth))
-            if depth > DEPTH_THRESH:
-                count = count + 1
-                print("count: " + str(count))
+            # ABOVE - check that robot is above a certain depth
+            # BELOW - check that robot is below a certain depth
+            if condition == ABOVE:
+                count = count + 1 if depth < depth_threshold else 0
             else:
-                count = 0
-                print("reset count")
+                count = count + 1 if depth > depth_threshold else 0
         else:
-            print("inactive: linear")
             count = 0
         time.sleep(1)
-    return
+    print("Finished waiting")
+
+KILLED   = True
+UNKILLED = False
+def waitForKill(state):
+    print("Waiting for " + \
+          ("KILL" if state == KILLED else "UNKILL"))
+    while True:
+        killData, active = client.getRemoteBufferContents("kill", ipaddress, serverid)
+        if active:
+            kill = Unpack(Kill, killData)
+            if kill.isKilled == state:
+                break
+        time.sleep(1)
+    print("Finished waiting")
+
+# Point and shoot follows the following logic:
+#     start:
+#         wait for depth below point - user wants to lock heading
+#         lock heading
+#         set control buffer
+#         wait for unkill - robot started
+#         wait for kill - run complete
+#         unset control buffer
+#         wait for depth above point - robot reset at the surface
+#         goto start
+
 
 while True:
-    waitForDepth()
-    print("finished waiting for depth")
+    # wait for depth to be below point
+    waitForDepth(DEPTH_THRESH_BELOW, COUNT_THRESH, BELOW)
+    # get heading data from sensor
     angularData, active = client.getRemoteBufferContents("angular", SENSOR_IP, SENSOR_ID)
     if active:
         angular = Unpack(Angular, angularData)
-        w = angular.pos[QUAT_W]
-        x = angular.pos[QUAT_X]
-        y = angular.pos[QUAT_Y]
-        z = angular.pos[QUAT_Z]
-        x = -x
-        y = -y
-        z = -z
 
-        t3 = (2 * ((w * z) + (x * y)))
-        t4 = (1 - (2 * ((y * y) + (z * z))))
+        # get heading
 
-        heading = 180 * math.atan2(t3, t4) / math.pi
-        print("heading: " + str(heading))
+        # w = angular.pos[QUAT_W]
+        # x = angular.pos[QUAT_X]
+        # y = angular.pos[QUAT_Y]
+        # z = angular.pos[QUAT_Z]
+        # x = -x
+        # y = -y
+        # z = -z
 
+        # t3 = (2 * ((w * z) + (x * y)))
+        # t4 = (1 - (2 * ((y * y) + (z * z))))
+
+        # heading = 180 * math.atan2(t3, t4) / math.pi
+
+        # sensor was rigged to publish euler angles through acc field
+        heading = angular.acc[ZAXIS]
+        print("Following heading: " + str(heading))
+
+        # set control buffer
         controlInput.angular[ZAXIS].pos[0] = heading
-        controlInput.angular[ZAXIS].pos[1] = 0
-
         controlInput.linear[XAXIS].vel = FORWARD_VEL
-
         controlInput.linear[ZAXIS].pos[0] = TARGET_DEPTH
-        controlInput.linear[ZAXIS].pos[1] = 0
 
-        client.registerLocalBuffer("control", sizeof(ControlInput), False)
-        time.sleep(0.1)
+        # write control buffer
         client.setLocalBufferContents("control", Pack(controlInput))
-        print("set control buffer")
 
-        while True:
-            time.sleep(10)
-    else:
-        print("inactive: angular")
+        # wait for unkill - robot started
+        waitForKill(UNKILLED)
+
+        # wait for kill - diver stopped robot
+        waitForKill(KILLED)
+
+        # unset control buffer
+        controlInput.angular[ZAXIS].pos[0] = 0
+        controlInput.linear[XAXIS].vel = 0
+        controlInput.linear[ZAXIS].pos[0] = 0
+
+        # write control buffer
+        client.setLocalBufferContents("control", Pack(controlInput))
+
+        # wait for depth to be above point
+        waitForDepth(DEPTH_THRESH_ABOVE, COUNT_THRESH, ABOVE)
