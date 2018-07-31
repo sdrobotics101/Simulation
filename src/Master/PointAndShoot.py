@@ -16,7 +16,7 @@ import pydsm
 COUNT_THRESH = 5
 DEPTH_THRESH_ABOVE = 0.35
 DEPTH_THRESH_BELOW = 0.35
-TARGET_DEPTH = 1.0
+TARGET_DEPTH = 0.5
 FORWARD_VEL = 100
 
 XAXIS = 0
@@ -140,7 +140,7 @@ def waitForKill(state):
     print("Waiting for " + \
           ("KILL" if state == KILLED else "UNKILL"))
     while True:
-        killData, active = client.getRemoteBufferContents("kill", ipaddress, serverid)
+        killData, active = client.getRemoteBufferContents("kill", NAVIGATION_IP, NAVIGATION_ID)
         if active:
             kill = Unpack(Kill, killData)
             if kill.isKilled == state:
