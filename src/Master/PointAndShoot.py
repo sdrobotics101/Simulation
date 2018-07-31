@@ -152,8 +152,10 @@ def waitForKill(state):
 #     start:
 #         wait for depth below point - user wants to lock heading
 #         lock heading
-#         set control buffer
+#         set control buffer for depth and heading
 #         wait for unkill - robot started
+#         wait for robot to settle
+#         set control buffer for forward velocity
 #         wait for kill - run complete
 #         unset control buffer
 #         wait for depth above point - robot reset at the surface
@@ -169,27 +171,12 @@ while True:
         angular = Unpack(Angular, angularData)
 
         # get heading
-
-        # w = angular.pos[QUAT_W]
-        # x = angular.pos[QUAT_X]
-        # y = angular.pos[QUAT_Y]
-        # z = angular.pos[QUAT_Z]
-        # x = -x
-        # y = -y
-        # z = -z
-
-        # t3 = (2 * ((w * z) + (x * y)))
-        # t4 = (1 - (2 * ((y * y) + (z * z))))
-
-        # heading = 180 * math.atan2(t3, t4) / math.pi
-
         # sensor was rigged to publish euler angles through acc field
         heading = angular.acc[ZAXIS]
         print("Following heading: " + str(heading))
 
         # set control buffer
         controlInput.angular[ZAXIS].pos[0] = heading
-        controlInput.linear[XAXIS].vel = FORWARD_VEL
         controlInput.linear[ZAXIS].pos[0] = TARGET_DEPTH
 
         # write control buffer
@@ -197,6 +184,15 @@ while True:
 
         # wait for unkill - robot started
         waitForKill(UNKILLED)
+
+        # wait 5 seconds for robot to settle
+        time.sleep(5)
+
+        # start moving forward
+        controlInput.linear[XAXIS].vel = FORWARD_VEL
+
+        # write control buffer
+        client.setLocalBufferContents("control", Pack(controlInput))
 
         # wait for kill - diver stopped robot
         waitForKill(KILLED)
