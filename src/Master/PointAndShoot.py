@@ -13,11 +13,12 @@ from Constants import *
 
 import pydsm
 
-COUNT_THRESH = 5
-DEPTH_THRESH_ABOVE = 0.25
-DEPTH_THRESH_BELOW = 0.35
-TARGET_DEPTH = 0.7
-FORWARD_VEL = 150
+COUNT_THRESH = 5 # counts
+DEPTH_THRESH_ABOVE = 0.25 # meters
+DEPTH_THRESH_BELOW = 0.35 # meters
+TARGET_DEPTH = 1.0 # meters
+FORWARD_VEL = 100 # raw
+SETTLING_TIME = 8 # seconds
 
 XAXIS = 0
 YAXIS = 1
@@ -185,8 +186,8 @@ while True:
         # wait for unkill - robot started
         waitForKill(UNKILLED)
 
-        # wait 5 seconds for robot to settle
-        time.sleep(5)
+        # wait for robot to settle
+        time.sleep(SETTLING_TIME)
 
         # start moving forward
         controlInput.linear[XAXIS].vel = FORWARD_VEL
