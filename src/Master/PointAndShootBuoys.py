@@ -18,12 +18,21 @@ COUNT_THRESH = 5 # counts
 DEPTH_THRESH_ABOVE = 0.25 # meters
 DEPTH_THRESH_BELOW = 0.35 # meters
 TARGET_DEPTH = 1.5 # meters
-FORWARD_VEL = 100 # raw
 FORWARD_SLOW_VEL = 50 # raw
 SETTLING_TIME = 8 # seconds
-GATE_TIME = 10 # seconds
 ROTATE_CHANGE_AMOUNT = 10 # degrees
 DEPTH_CHANGE_AMOUNT = 0.1 # meters
+BUOY_SETTLING_TIME = 1 # seconds
+
+# Full Run
+# FORWARD_VEL = 100 # raw
+# COUNT_THRESH = 5 # counts
+# GATE_TIME = 10 # seconds
+
+# Just Buoy Test
+FORWARD_VEL = 0 # raw
+COUNT_THRESH = 1 # counts
+GATE_TIME = 0 # seconds
 
 XAXIS = 0
 YAXIS = 1
@@ -257,7 +266,7 @@ while True:
             else:
                 controlInput.linear[XAXIS].vel = 0
             client.setLocalBufferContents("control", Pack(controlInput))
-            time.sleep(1)
+            time.sleep(BUOY_SETTLING_TIME)
 
         print("Finished run, resetting")
 
