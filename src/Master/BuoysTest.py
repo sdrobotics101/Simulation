@@ -17,6 +17,8 @@ import pydsm
 TARGET_DEPTH = 1.5 # meters
 FORWARD_SLOW_VEL = 0 # raw
 SETTLING_TIME = 5 # seconds
+ROTATE_CHANGE_AMOUNT = 10 # degrees
+DEPTH_CHANGE_AMOUNT = 0.1 # meters
 
 XAXIS = 0
 YAXIS = 1
@@ -174,13 +176,13 @@ while not isRobotKilled():
         if location.y or location.z:
             controlInput.linear[XAXIS].vel = 0
 
-            controlInput.linear[ZAXIS].pos[0] = controlInput.linear[ZAXIS].pos[0] + (0.1 * location.z)
+            controlInput.linear[ZAXIS].pos[0] = controlInput.linear[ZAXIS].pos[0] + (DEPTH_CHANGE_AMOUNT * location.z)
             if controlInput.linear[ZAXIS].pos[0] > 3:
                 controlInput.linear[ZAXIS].pos[0] = 3
             if controlInput.linear[ZAXIS].pos[0] < 1:
                 controlInput.linear[ZAXIS].pos[0] = 1
 
-            controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] + (10 * location.y)
+            controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] + (ROTATE_CHANGE_AMOUNT * location.y)
             while controlInput.angular[ZAXIS].pos[0] > 180:
                 controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] - 360
             while controlInput.angular[ZAXIS].pos[0] < -180:
