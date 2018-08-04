@@ -21,6 +21,7 @@ TARGET_DEPTH = 1.5 # meters
 FORWARD_VEL = 100 # raw
 FORWARD_SLOW_VEL = 50 # raw
 SETTLING_TIME = 8 # seconds
+GATE_TIME = 10 # seconds
 ROTATE_CHANGE_AMOUNT = 10 # degrees
 DEPTH_CHANGE_AMOUNT = 0.1 # meters
 
@@ -223,7 +224,7 @@ while True:
         client.setLocalBufferContents("control", Pack(controlInput))
 
         # pass through gate
-        time.sleep(10)
+        time.sleep(GATE_TIME)
 
         # attempt buoys
         while not isRobotKilled():
