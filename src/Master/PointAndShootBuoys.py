@@ -215,9 +215,11 @@ while True:
         waitForKill(UNKILLED)
 
         # wait for robot to settle
+        print("Waiting for robot to settle")
         time.sleep(SETTLING_TIME)
 
         # start moving forward
+        print("Moving through gate")
         controlInput.linear[XAXIS].vel = FORWARD_VEL
 
         # write control buffer
@@ -225,6 +227,7 @@ while True:
 
         # pass through gate
         time.sleep(GATE_TIME)
+        print("Starting buoys")
 
         # attempt buoys
         while not isRobotKilled():
@@ -255,6 +258,8 @@ while True:
                 controlInput.linear[XAXIS].vel = 0
             client.setLocalBufferContents("control", Pack(controlInput))
             time.sleep(1)
+
+        print("Finished run, resetting")
 
         # unset control buffer
         controlInput.angular[ZAXIS].pos[0] = 0
