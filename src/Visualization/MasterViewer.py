@@ -51,9 +51,13 @@ def main(stdscr):
             controlInputData, active = client.getRemoteBufferContents("control", ipaddress, serverid)
             if (active):
                 stdscr.addstr(0, 0, "CONTROL", curses.color_pair(2))
+                stdscr.addstr(1, 1, "ANGULAR:", curses.color_pair(2))
+                stdscr.addstr(5, 1, "LINEAR:", curses.color_pair(2))
                 controlInput = Unpack(ControlInput, controlInputData)
             else:
                 stdscr.addstr(0, 0, "CONTROL", curses.color_pair(1))
+                stdscr.addstr(1, 1, "ANGULAR:", curses.color_pair(1))
+                stdscr.addstr(5, 1, "LINEAR:", curses.color_pair(1))
                 controlInput.angular[XAXIS].pos[0] = 0
                 controlInput.angular[XAXIS].pos[1] = 0
                 controlInput.angular[YAXIS].pos[0] = 0
@@ -64,12 +68,10 @@ def main(stdscr):
                 controlInput.linear[YAXIS].vel = 0
                 controlInput.linear[ZAXIS].pos[0] = 0
                 controlInput.linear[ZAXIS].pos[1] = 0
-            stdscr.addstr(1, 1, "ANGULAR:", curses.color_pair(2))
             stdscr.addstr(2, 2, "X: "+str(controlInput.angular[XAXIS].pos[0]))
             stdscr.addstr(3, 2, "Y: "+str(controlInput.angular[YAXIS].pos[0]))
             stdscr.addstr(4, 2, "Z: "+str(controlInput.angular[ZAXIS].pos[0]))
 
-            stdscr.addstr(5, 1, "LINEAR:", curses.color_pair(2))
             stdscr.addstr(6, 2, "X: "+str(controlInput.linear[XAXIS].vel))
             stdscr.addstr(7, 2, "Y: "+str(controlInput.linear[YAXIS].vel))
             stdscr.addstr(8, 2, "Z: "+str(controlInput.linear[ZAXIS].pos[0]))
