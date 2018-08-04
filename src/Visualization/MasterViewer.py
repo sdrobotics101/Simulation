@@ -69,7 +69,7 @@ def main(stdscr):
             stdscr.addstr(3, 2, "Y: "+str(controlInput.angular[YAXIS].pos[0]))
             stdscr.addstr(4, 2, "Z: "+str(controlInput.angular[ZAXIS].pos[0]))
 
-            stdscr.addstr(5, 1, "LINEAR:", curses_color_pair(2))
+            stdscr.addstr(5, 1, "LINEAR:", curses.color_pair(2))
             stdscr.addstr(6, 2, "X: "+str(controlInput.linear[XAXIS].vel))
             stdscr.addstr(7, 2, "Y: "+str(controlInput.linear[YAXIS].vel))
             stdscr.addstr(8, 2, "Z: "+str(controlInput.linear[ZAXIS].pos[0]))
