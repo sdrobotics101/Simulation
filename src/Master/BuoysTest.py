@@ -174,17 +174,17 @@ while not isRobotKilled():
         if location.y or location.z:
             controlInput.linear[XAXIS].vel = 0
 
-            controlInput.linear[ZAXIS].pos[0] = linear.pos[ZAXIS] + (0.1 * location.z)
+            controlInput.linear[ZAXIS].pos[0] = controlInput.linear[ZAXIS].pos[0] + (0.1 * location.z)
             if controlInput.linear[ZAXIS].pos[0] > 3:
                 controlInput.linear[ZAXIS].pos[0] = 3
             if controlInput.linear[ZAXIS].pos[0] < 1:
                 controlInput.linear[ZAXIS].pos[0] = 1
 
-            controlInput.angular[ZAXIS].pos[0] = angular.acc[ZAXIS] + (10 * location.y)
+            controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] + (10 * location.y)
             while controlInput.angular[ZAXIS].pos[0] > 180:
-                controlInput.angular[ZAXIS].pos[0] = controlInput.angular[zaxis].pos[0] - 360
+                controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] - 360
             while controlInput.angular[ZAXIS].pos[0] < -180:
-                controlInput.angular[ZAXIS].pos[0] = controlInput.angular[zaxis].pos[0] + 360
+                controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] + 360
         else:
             controlInput.linear[XAXIS].vel = FORWARD_SLOW_VEL
     else:
