@@ -114,9 +114,9 @@ print("Created local buffers: control, sensorreset")
 client.registerRemoteBuffer("angular", SENSOR_IP, SENSOR_ID)
 client.registerRemoteBuffer("linear", SENSOR_IP, SENSOR_ID)
 client.registerRemoteBuffer("kill", NAVIGATION_IP, NAVIGATION_ID)
-client.registerRemoteBuffer("location", FORWARD_IP, FORWARD_ID)
+client.registerRemoteBuffer("targetlocation", FORWARD_IP, FORWARD_ID)
 time.sleep(0.5)
-print("Registered remote buffers: angular,linear,kill,location")
+print("Registered remote buffers: angular,linear,kill,targetlocation")
 
 KILLED   = True
 UNKILLED = False
@@ -164,7 +164,7 @@ time.sleep(SETTLING_TIME)
 
 # attempt buoys
 while not isRobotKilled():
-    locationData, loc_active = client.getRemoteBufferContents("location", FORWARD_IP, FORWARD_ID)
+    locationData, loc_active = client.getRemoteBufferContents("targetlocation", FORWARD_IP, FORWARD_ID)
     angularData, ang_active = client.getRemoteBufferContents("angular", SENSOR_IP, SENSOR_ID)
     linearData, lin_active = client.getRemoteBufferContents("linear", SENSOR_IP, SENSOR_ID)
     if loc_active and ang_active and lin_active:
