@@ -14,25 +14,24 @@ from Vision import *
 
 import pydsm
 
-COUNT_THRESH = 5 # counts
 DEPTH_THRESH_ABOVE = 0.25 # meters
 DEPTH_THRESH_BELOW = 0.35 # meters
-TARGET_DEPTH = 1.5 # meters
+TARGET_DEPTH = 2.0 # meters
 FORWARD_SLOW_VEL = 50 # raw
 SETTLING_TIME = 8 # seconds
-ROTATE_CHANGE_AMOUNT = 10 # degrees
+ROTATE_CHANGE_AMOUNT = 5 # degrees
 DEPTH_CHANGE_AMOUNT = 0.1 # meters
 BUOY_SETTLING_TIME = 1 # seconds
 
 # Full Run
-# FORWARD_VEL = 100 # raw
-# COUNT_THRESH = 5 # counts
-# GATE_TIME = 10 # seconds
+FORWARD_VEL = 100 # raw
+COUNT_THRESH = 5 # counts
+GATE_TIME = 25 # seconds
 
 # Just Buoy Test
-FORWARD_VEL = 0 # raw
-COUNT_THRESH = 1 # counts
-GATE_TIME = 0 # seconds
+# FORWARD_VEL = 0 # raw
+# COUNT_THRESH = 1 # counts
+# GATE_TIME = 0 # seconds
 
 XAXIS = 0
 YAXIS = 1
@@ -253,8 +252,12 @@ while True:
                     controlInput.linear[ZAXIS].pos[0] = controlInput.linear[ZAXIS].pos[0] + (DEPTH_CHANGE_AMOUNT * location.z)
                     if controlInput.linear[ZAXIS].pos[0] > 3:
                         controlInput.linear[ZAXIS].pos[0] = 3
-                    if controlInput.linear[ZAXIS].pos[0] < 1:
-                        controlInput.linear[ZAXIS].pos[0] = 1
+                        if not location.y:
+                            controlInput.linear[XAXIS].vel = FORWARD_SLOW_VEL
+                    if controlInput.linear[ZAXIS].pos[0] < 1.5:
+                        controlInput.linear[ZAXIS].pos[0] = 1.5
+                        if not location.y:
+                            controlInput.linear[XAXIS].vel = FORWARD_SLOW_VEL
 
                     controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] + (ROTATE_CHANGE_AMOUNT * location.y)
                     while controlInput.angular[ZAXIS].pos[0] > 180:
