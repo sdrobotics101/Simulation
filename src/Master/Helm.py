@@ -31,7 +31,7 @@ def quaternion_to_euler_angle(q):
     return ex, ey, ez
 
 SERVERID = MASTER_SERVER_ID
-CLIENTID = 100
+CLIENTID = 97
 
 # Bit indices for mode byte
 MODE_ANGULAR_X = 7

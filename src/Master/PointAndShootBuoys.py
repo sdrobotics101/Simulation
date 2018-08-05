@@ -252,8 +252,10 @@ while True:
 
             # wait for robot to settle
             print("Waiting for robot to settle")
-            time.sleep(S1_SETTLING_TIME)
-
+            for i in range(S1_SETTLING_TIME):
+                if isRobotKilled():
+                    break
+                time.sleep(1)
             if isRobotKilled():
                 continue
 
@@ -261,8 +263,10 @@ while True:
             print("Moving through gate")
             controlInput.linear[XAXIS].vel = S1_FORWARD_VEL
             client.setLocalBufferContents("control", Pack(controlInput))
-            time.sleep(S1_TRAVEL_TIME)
-
+            for i in range(S1_TRAVEL_TIME):
+                if isRobotKilled():
+                    break
+                time.sleep(1)
             if isRobotKilled():
                 continue
 
@@ -279,8 +283,10 @@ while True:
 
             # wait for robot to settle
             print("Waiting for robot to settle")
-            time.sleep(S2_SETTLING_TIME)
-
+            for i in range(S2_SETTLING_TIME):
+                if isRobotKilled():
+                    break
+                time.sleep(1)
             if isRobotKilled():
                 continue
 
@@ -288,8 +294,10 @@ while True:
             print("Moving forward")
             controlInput.linear[XAXIS].vel = S2_FORWARD_VEL
             client.setLocalBufferContents("control", Pack(controlInput))
-            time.sleep(S2_TRAVEL_TIME)
-
+            for i in range(S2_TRAVEL_TIME):
+                if isRobotKilled():
+                    break
+                time.sleep(1)
             if isRobotKilled():
                 continue
 
@@ -301,8 +309,10 @@ while True:
 
             # wait for robot to settle
             print("Waiting for robot to settle")
-            time.sleep(S3_SETTLING_TIME)
-
+            for i in range(S3_SETTLING_TIME):
+                if isRobotKilled():
+                    break
+                time.sleep(1)
             if isRobotKilled():
                 continue
 
