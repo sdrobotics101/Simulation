@@ -14,7 +14,6 @@ from Serialization import *
 from Constants import *
 from Vision import *
 
-
 # Point and shoot (+Buoys) follows the following logic:
 #     start:
 #         wait for depth below point - user wants to lock heading
@@ -56,9 +55,9 @@ S1_TRAVEL_TIME   = 25 # seconds
 
 S2_TARGET_DEPTH   = 1 # meters
 S2_SETTLING_TIME  = 8 # seconds
-S2_FORWARD_VEL    = 100 # raw
+S2_FORWARD_VEL    = 50 # raw
 S2_TRAVEL_TIME    = 2 # seconds
-S2_HEADING_CHANGE = 90 # degrees
+S2_HEADING_CHANGE = -15 # degrees
 
 # Stage 3 - prepare for buoys
 
