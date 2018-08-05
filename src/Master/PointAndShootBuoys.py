@@ -43,7 +43,7 @@ COUNT_THRESH       = 5 # counts
 # Stage 1 - dead reckon through gate
 
 S1_TARGET_DEPTH  = 1 # meters
-S1_SETTLING_TIME = 8 # seconds
+S1_SETTLING_TIME = 10 # seconds
 # Full Run
 S1_FORWARD_VEL   = 100 # raw
 S1_TRAVEL_TIME   = 25 # seconds
@@ -57,12 +57,12 @@ S2_TARGET_DEPTH   = 1 # meters
 S2_SETTLING_TIME  = 8 # seconds
 S2_FORWARD_VEL    = 50 # raw
 S2_TRAVEL_TIME    = 2 # seconds
-S2_HEADING_CHANGE = -15 # degrees
+S2_HEADING_CHANGE = -20 # degrees
 
 # Stage 3 - prepare for buoys
 
 S3_TARGET_DEPTH   = 2.0 # meters
-S3_SETTLING_TIME  = 8 # seconds
+S3_SETTLING_TIME  = 5 # seconds
 
 # Stage 4 - attempt buoys
 
