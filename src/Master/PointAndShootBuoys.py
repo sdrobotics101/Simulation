@@ -57,8 +57,8 @@ S1_TRAVEL_TIME   = 25 # seconds
 S2_TARGET_DEPTH   = 1 # meters
 S2_SETTLING_TIME  = 8 # seconds
 S2_FORWARD_VEL    = 100 # raw
-S2_TRAVEL_TIME    = 0 # seconds
-S2_HEADING_CHANGE = 0 # degrees
+S2_TRAVEL_TIME    = 2 # seconds
+S2_HEADING_CHANGE = 90 # degrees
 
 # Stage 3 - prepare for buoys
 
@@ -68,8 +68,8 @@ S3_SETTLING_TIME  = 8 # seconds
 # Stage 4 - attempt buoys
 
 S4_FORWARD_VEL    = 50 # raw
-S4_HEADING_CHANGE = 5 # degrees
-S4_DEPTH_CHANGE   = 0.1 # meters
+S4_HEADING_CHANGE = 2 # degrees
+S4_DEPTH_CHANGE   = 0.05 # meters
 S4_LOOP_DELAY     = 0.1 # seconds
 
 XAXIS = 0
@@ -223,6 +223,12 @@ def isRobotKilled():
 
 while True:
     try:
+        # unset control buffer
+        controlInput.angular[ZAXIS].pos[0] = 0
+        controlInput.linear[XAXIS].vel = 0
+        controlInput.linear[ZAXIS].pos[0] = 0
+        client.setLocalBufferContents("control", Pack(controlInput))
+
         # wait for depth to be below point
         waitForDepth(DEPTH_THRESH_BELOW, COUNT_THRESH, BELOW)
         # get heading data from sensor
@@ -248,11 +254,17 @@ while True:
             print("Waiting for robot to settle")
             time.sleep(S1_SETTLING_TIME)
 
+            if isRobotKilled():
+                continue
+
             # start moving forward
             print("Moving through gate")
             controlInput.linear[XAXIS].vel = S1_FORWARD_VEL
             client.setLocalBufferContents("control", Pack(controlInput))
             time.sleep(S1_TRAVEL_TIME)
+
+            if isRobotKilled():
+                continue
 
             # start second stage
             print("Starting second stage")
@@ -269,11 +281,17 @@ while True:
             print("Waiting for robot to settle")
             time.sleep(S2_SETTLING_TIME)
 
+            if isRobotKilled():
+                continue
+
             # start moving forward
             print("Moving forward")
             controlInput.linear[XAXIS].vel = S2_FORWARD_VEL
             client.setLocalBufferContents("control", Pack(controlInput))
             time.sleep(S2_TRAVEL_TIME)
+
+            if isRobotKilled():
+                continue
 
             # start third stage
             print("Starting third stage")
@@ -284,6 +302,9 @@ while True:
             # wait for robot to settle
             print("Waiting for robot to settle")
             time.sleep(S3_SETTLING_TIME)
+
+            if isRobotKilled():
+                continue
 
             # start fourth stage
             print("Starting fourth stage (buoys)")
@@ -324,17 +345,6 @@ while True:
                 time.sleep(S4_LOOP_DELAY)
 
             print("Finished run, resetting")
-
-            # unset control buffer
-            controlInput.angular[ZAXIS].pos[0] = 0
-            controlInput.linear[XAXIS].vel = 0
-            controlInput.linear[ZAXIS].pos[0] = 0
-
-            # write control buffer
-            client.setLocalBufferContents("control", Pack(controlInput))
-
-            # wait for depth to be above point
-            waitForDepth(DEPTH_THRESH_ABOVE, COUNT_THRESH, ABOVE)
     except KeyboardInterrupt:
         print("Caught control-C, exiting")
         break
