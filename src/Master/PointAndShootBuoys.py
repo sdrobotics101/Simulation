@@ -258,6 +258,10 @@ while True:
             print("Starting second stage")
             controlInput.linear[XAXIS].vel = 0
             controlInput.angular[ZAXIS].pos[0] = heading + S2_HEADING_CHANGE
+            while controlInput.angular[ZAXIS].pos[0] > 180:
+                controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] - 360
+            while controlInput.angular[ZAXIS].pos[0] < -180:
+                controlInput.angular[ZAXIS].pos[0] = controlInput.angular[ZAXIS].pos[0] + 360
             controlInput.linear[ZAXIS].pos[0] = S2_TARGET_DEPTH
             client.setLocalBufferContents("control", Pack(controlInput))
 
