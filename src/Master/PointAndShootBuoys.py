@@ -1,10 +1,11 @@
 # pylint: disable=C0301
 import time
 import sys
-import pydsm
 from bitstring import BitArray
 sys.path.append("../Dependencies/PythonSharedBuffers/src")
 sys.path.append("../../../DistributedSharedMemory")
+
+import pydsm
 
 from Master import *
 from Sensor import *
